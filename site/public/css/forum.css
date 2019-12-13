@@ -88,6 +88,10 @@ body {min-width: 925px;}
     font-weight: normal;
 }
 
+.thread_box.grader_post {
+    border: 4px solid var(--important-post);
+}
+
 #thread_list a {
     text-decoration: none;
     color: initial;
