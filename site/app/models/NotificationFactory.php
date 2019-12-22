@@ -209,6 +209,9 @@ class NotificationFactory {
                 $flattened_notifications[] = $notification->getNotifyContent();
                 $flattened_notifications[] = $notification->getNotifySource();
                 $flattened_notifications[] = $notification->getNotifyTarget();
+
+                //Send notification to phone
+                $this->sendNotificationToFirebase($notification);
             }
         }
         if (!empty($flattened_notifications)) {
@@ -216,6 +219,43 @@ class NotificationFactory {
             // so to calculate the number of notifications we must use flattened notifications
             $this->core->getQueries()->insertNotifications($flattened_notifications, count($flattened_notifications) / 5);
         }
+    }
+
+    //takes a $notification and makes a request to firebase if the user has a
+    //firebase notification id in the database
+    public function sendNotificationToFirebase($notification){
+        //
+        // $url = 'https://fcm.googleapis.com/fcm/send';
+        // $fields = array (
+        //         'to' => $this->core->getQueries()->getFirebaseId($notification->getNotifyTarget()),
+        //         'notification' => array (
+        //                 "body" => $notification->getNotifyContent(),
+        //                 "title" => "Title"
+        //         ),
+        //         'data' => array (
+        //             "body" => $notification->getNotifyContent(),
+        //             "title" => "Title"
+        //         )
+        // );
+        // $fields = json_encode ( $fields );
+        // $headers = array (
+        //         'Authorization: key=' . $server_key,
+        //         'Content-Type: application/json'
+        // );
+        //
+        // $ch = curl_init ();
+        // curl_setopt ( $ch, CURLOPT_URL, $url );
+        // curl_setopt ( $ch, CURLOPT_POST, true );
+        // curl_setopt ( $ch, CURLOPT_HTTPHEADER, $headers );
+        // curl_setopt ( $ch, CURLOPT_RETURNTRANSFER, true );
+        // curl_setopt ( $ch, CURLOPT_POSTFIELDS, $fields );
+        //
+        // $result = curl_exec ( $ch );
+        // curl_close ( $ch );
+        //
+
+
+
     }
 
     /**

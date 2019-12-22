@@ -6020,4 +6020,13 @@ AND gc_id IN (
             array($firebase_id, $user_id)
         );
     }
+
+    //returns a user's firebase id
+    public function getFirebaseId($user_id) {
+        $this->submitty_db->query(
+            "SELECT firebase_id FROM users WHERE user_id=?",
+            array($user_id)
+        );
+        return $this->submitty_db->rows()[0]['firebase_id'];
+    }
 }
