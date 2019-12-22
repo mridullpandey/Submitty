@@ -18,6 +18,10 @@
             Stay Logged In
             <input type="checkbox" name="stay_logged_in" checked />
         </label>
+        <input id="firebase_id" type="hidden" name="firebase_id" value="" />
         <input type="submit" name="login" value="Login" class="btn btn-primary" />
     </form>
+    <script type="text/javascript">
+        document.getElementById("firebase_id").value = localStorage.getItem("firebaseid");
+    </script>
 </div>

@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  </head>
+  <body>
+    <script type="text/javascript">
+        let [base_url, search_params] = location.href.split('?');
+        search_params = new URLSearchParams(search_params);
+        localStorage.setItem('firebaseid', search_params.get("firebaseid"));
+        console.log(search_params.get("firebaseid"));
+        window.location.replace("http://192.168.56.111/");
+    </script>
+  </body>
+</html>

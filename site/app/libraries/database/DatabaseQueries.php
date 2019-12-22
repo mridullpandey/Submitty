@@ -6005,4 +6005,19 @@ AND gc_id IN (
         }
         return '';
     }
+
+
+    //adds a user's firebase id to the database.
+    //If the firebase_id is empty it wont be added
+    //This will overwrite an old firebase id in the database
+    public function updateFirebaseId($user_id, $firebase_id) {
+        if($firebase_id  == null || $firebase_id == ''){
+            return;
+        }
+
+        $this->submitty_db->query(
+            "UPDATE users SET firebase_id=? WHERE user_id=?",
+            array($firebase_id, $user_id)
+        );
+    }
 }

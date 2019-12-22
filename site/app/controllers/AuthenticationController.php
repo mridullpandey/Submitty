@@ -78,6 +78,20 @@ class AuthenticationController extends AbstractController {
     }
 
     /**
+     * Loads a page which saves a firebase id to local storage
+     * Redirects from that page to the website homepage
+     *
+     * @Route("/firebaseredirect")
+     *
+     * @return Response
+     */
+    public function saveFirebaseId() {
+        return Response::WebOnlyResponse(
+            new WebResponse('FirebaseRedirect', 'loadpage')
+        );
+    }
+
+    /**
      * Checks the submitted login form via the configured "authentication" setting. Additionally, on successful
      * login, we want to redirect the user $_REQUEST the page they were attempting to goto before being sent to the
      * login form (this being saved in the $_POST['old'] array). However, on failure to login, we want to continue
@@ -112,9 +126,12 @@ class AuthenticationController extends AbstractController {
         $this->core->getAuthentication()->setPassword($_POST['password']);
         if ($this->core->authenticate($_POST['stay_logged_in']) === true) {
             Logger::logAccess($_POST['user_id'], $_COOKIE['submitty_token'], "login");
-            $msg = "Successfully logged in as " . htmlentities($_POST['user_id']);
 
+            $this->core->getQueries()->updateFirebaseId($_POST['user_id'], $_POST['firebase_id']);
+
+            $msg = "Successfully logged in as " . htmlentities($_POST['user_id']);
             $this->core->addSuccessMessage($msg);
+
             return new Response(
                 JsonResponse::getSuccessResponse(['message' => $msg, 'authenticated' => true]),
                 null,
