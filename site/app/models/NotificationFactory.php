@@ -6,6 +6,7 @@ use app\libraries\Core;
 use app\models\Email;
 use app\models\Notification;
 use app\models\User;
+use app\exceptions\CurlException;
 use LogicException;
 
 /**
@@ -224,38 +225,54 @@ class NotificationFactory {
     //takes a $notification and makes a request to firebase if the user has a
     //firebase notification id in the database
     public function sendNotificationToFirebase($notification){
-        //
-        // $url = 'https://fcm.googleapis.com/fcm/send';
-        // $fields = array (
-        //         'to' => $this->core->getQueries()->getFirebaseId($notification->getNotifyTarget()),
-        //         'notification' => array (
-        //                 "body" => $notification->getNotifyContent(),
-        //                 "title" => "Title"
-        //         ),
-        //         'data' => array (
-        //             "body" => $notification->getNotifyContent(),
-        //             "title" => "Title"
-        //         )
-        // );
-        // $fields = json_encode ( $fields );
-        // $headers = array (
-        //         'Authorization: key=' . $server_key,
-        //         'Content-Type: application/json'
-        // );
-        //
-        // $ch = curl_init ();
-        // curl_setopt ( $ch, CURLOPT_URL, $url );
-        // curl_setopt ( $ch, CURLOPT_POST, true );
-        // curl_setopt ( $ch, CURLOPT_HTTPHEADER, $headers );
-        // curl_setopt ( $ch, CURLOPT_RETURNTRANSFER, true );
-        // curl_setopt ( $ch, CURLOPT_POSTFIELDS, $fields );
-        //
-        // $result = curl_exec ( $ch );
-        // curl_close ( $ch );
-        //
+        
+        $fields = array (
+                'to' => $this->core->getQueries()->getFirebaseId($notification->getNotifyTarget()),
+                'notification' => array (
+                    // "body" => $notification->getNotifyContent(),
+                    "title" => $notification->getNotifyContent(),
+                    "body" => "https://google.com"
+                ),
+                'data' => array (
+                    // "body" => $notification->getNotifyContent(),
+                    "title" => $notification->getNotifyContent(),
+                    "body" => "https://google.com"
+                )
+        );
+        $fields = json_encode ( $fields );
+
+        $headers = array (
+                'Authorization: key=' . $server_key,
+                'Content-Type: application/json'
+        );
 
 
+        $curl = curl_init();
 
+        curl_setopt_array($curl, array(
+          CURLOPT_URL => "https://fcm.googleapis.com/fcm/send",
+          CURLOPT_RETURNTRANSFER => true,
+          CURLOPT_ENCODING => "",
+          CURLOPT_MAXREDIRS => 10,
+          CURLOPT_TIMEOUT => 0,
+          CURLOPT_VERBOSE => true,
+          CURLOPT_FOLLOWLOCATION => true,
+          CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+          CURLOPT_CUSTOMREQUEST => "POST",
+          CURLOPT_POSTFIELDS => $fields,
+          CURLOPT_HTTPHEADER => $headers,
+        ));
+
+        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);//TODO remove this and fix the ssl issue
+
+        $result = curl_exec($curl);
+
+        if ($result === FALSE) {
+            printf("cUrl error (#%d): %s<br>\n", curl_errno($curl),
+                   htmlspecialchars(curl_error($curl)));
+        }
+
+        curl_close($curl);
     }
 
     /**
